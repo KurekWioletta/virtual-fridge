@@ -30,7 +30,7 @@ pipeline {
         }
         stage('Run VirtualFridge container') {
             steps {
-                sh 'docker run --publish ${PORT}:80 --detach --name virtualfridgeapi_${IDENTIFIER} virtualfridgeapi_${IDENTIFIER}:1.0'
+                sh 'docker run --publish ${PORT}:8080 --detach --name virtualfridgeapi_${IDENTIFIER} virtualfridgeapi_${IDENTIFIER}:1.0'
             }
         }
     }
