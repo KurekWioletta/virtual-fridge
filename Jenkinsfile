@@ -1,11 +1,11 @@
 pipeline {
     agent {
         node {
-            label 'VirtualFridge'
+            label 'master'
         }
     }
     environment {
-        IDENTIFIER = "${env.BRANCH_NAME == "main" ? "main" : "master"}"
+        IDENTIFIER = "${env.BRANCH_NAME == "main" ? "main" : "develop"}"
         PORT = "${env.BRANCH_NAME == "main" ? 6010 : 16010}"
     }
 
@@ -23,14 +23,14 @@ pipeline {
                 }
             }
         }
-        stage('Build CoHelp container') {
+        stage('Build VirtualFridge container') {
             steps {
-                sh 'docker build -f Dockerfile --tag virtualfridgeapi_${IDENTIFIER}:1.0 src/'
+                sh 'docker build -f Dockerfile --tag virtualfridgeapi_${IDENTIFIER}:1.0 .'
             }
         }
-        stage('Run CoHelp container') {
+        stage('Run VirtualFridge container') {
             steps {
-                sh 'docker run --publish ${PORT}:80 --detach --name virtualfridgeapi_${IDENTIFIER} virtualfridgeapi_${IDENTIFIER}:1.0'
+                sh 'docker run --publish ${PORT}:8080 --detach --name virtualfridgeapi_${IDENTIFIER} virtualfridgeapi_${IDENTIFIER}:1.0'
             }
         }
     }

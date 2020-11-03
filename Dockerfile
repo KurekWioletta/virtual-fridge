@@ -1,13 +1,14 @@
 # Use the official gradle image to create a build artifact.
 # https://hub.docker.com/_/gradle
-FROM gradle:4.10 as builder
+FROM gradle:6.7.0 as builder
 
 # Copy local code to the container image.
-COPY build.gradle .
+COPY build.gradle.kts .
 COPY src ./src
 
 # Build a release artifact.
 RUN gradle clean build --no-daemon
+
 
 # Use AdoptOpenJDK for base image.
 # It's important to use OpenJDK 8u191 or above that has container support enabled.
@@ -16,7 +17,7 @@ RUN gradle clean build --no-daemon
 FROM adoptopenjdk/openjdk8:jdk8u202-b08-alpine-slim
 
 # Copy the jar to the production image from the builder stage.
-COPY --from=builder /home/gradle/build/libs/gradle.jar /virtualfridge.jar
+COPY --from=builder /home/gradle/build/libs/gradle*.jar /virtualfridge.jar
 
 # Run the web service on container startup.
-CMD [ "java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "/virtualfride.jar" ]
+CMD [ "java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "/virtualfridge.jar" ]
