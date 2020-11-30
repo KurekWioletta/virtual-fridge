@@ -2,6 +2,7 @@ package com.virtualfridge.virtualfridge.controlers
 
 import com.virtualfridge.virtualfridge.models.UserResponse
 import com.virtualfridge.virtualfridge.services.RegistrationService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -15,8 +16,8 @@ class RegistrationController(val registrationService: RegistrationService) {
             @RequestParam("password") password: String,
             @RequestParam("first_name") firstName: String,
             @RequestParam("last_name") lastName: String
-    ): UserResponse {
-        return UserResponse("mockedEmail", "mockedFirstName", "mockedLastName", true)
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok(UserResponse("123", "mockedEmail", "mockedFirstName", "mockedLastName", true))
     }
 
     @PostMapping("/registration/register_with_google")
@@ -25,8 +26,8 @@ class RegistrationController(val registrationService: RegistrationService) {
             @RequestParam("google_id") googleId: String,
             @RequestParam("first_name") firstName: String,
             @RequestParam("last_name") lastName: String
-    ): UserResponse {
-        return UserResponse("mockedEmail", "mockedFirstName", "mockedLastName", true)
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok(UserResponse("123", "mockedEmail", "mockedFirstName", "mockedLastName", true))
     }
 
 }

@@ -2,6 +2,7 @@ package com.virtualfridge.virtualfridge.controlers
 
 import com.virtualfridge.virtualfridge.models.UserResponse
 import com.virtualfridge.virtualfridge.services.UserService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -13,7 +14,7 @@ class UserController(val userService: UserService) {
     fun login(
             @RequestParam("email") email: String,
             @RequestParam("password") password: String
-    ): UserResponse {
-        return UserResponse("mockedEmail", "mockedFirstName", "mockedLastName", true)
+    ): ResponseEntity<UserResponse> {
+        return ResponseEntity.ok(UserResponse("123", "mockedEmail", "mockedFirstName", "mockedLastName", true))
     }
 }
