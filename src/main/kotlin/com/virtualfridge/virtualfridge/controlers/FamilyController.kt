@@ -22,7 +22,7 @@ class FamilyController(val userService: UserService) {
         return ResponseEntity.ok(list)
     }
 
-    @GetMapping("family/members/{userId}")
+    @GetMapping("/family/members/{userId}")
     fun familyMembers(
             @PathVariable("userId") userId: String
     ): ResponseEntity<List<FamilyMemberResponse>> {
@@ -34,40 +34,40 @@ class FamilyController(val userService: UserService) {
         return ResponseEntity.ok(list)
     }
 
-    @PutMapping("family/invitations/accept")
+    @PutMapping("/family/invitations/accept")
     fun acceptInvitation(
             @RequestParam("invitationId") invitationId: String
     ): ResponseEntity<String> {
-        return ResponseEntity.ok("MockedName");
+        return ResponseEntity.ok("MockedName")
     }
 
-    @PutMapping("family/leave")
+    @PutMapping("/family/leave")
     fun leaveFamily(
-            @RequestParam("invitationId") userId: String
+            @RequestParam("userId") userId: String
     ): ResponseEntity<String> {
-        return ResponseEntity.ok("MockedName");
+        return ResponseEntity.ok("Family left successfully")
     }
 
-    @PostMapping("family/create")
+    @PostMapping("/family/create")
     fun createFamily(
             @RequestParam("userId") userId: String,
             @RequestParam("familyName") familyName: String
     ): ResponseEntity<String> {
-        return ResponseEntity.ok("MockedName");
+        return ResponseEntity.ok("MockedName")
     }
 
-    @PostMapping("family/invite")
+    @PostMapping("/family/invite")
     fun inviteMember(
             @RequestParam("userId") userId: String,
             @RequestParam("memberEmail") memberEmail: String
     ): ResponseEntity<String> {
-        return ResponseEntity.ok("Family member invited");
+        return ResponseEntity.ok("Family member invited")
     }
 
-    @DeleteMapping("family/invitations/decline")
+    @DeleteMapping("/family/invitations/decline")
     fun declineInvitation(
             @RequestParam("invitationId") invitationId: String
     ): ResponseEntity<String> {
-        return ResponseEntity.ok("Invitation declined");
+        return ResponseEntity.ok("Invitation declined")
     }
 }
