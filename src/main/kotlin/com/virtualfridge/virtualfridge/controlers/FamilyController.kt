@@ -1,14 +1,19 @@
 package com.virtualfridge.virtualfridge.controlers
 
+import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.models.FamilyMemberResponse
 import com.virtualfridge.virtualfridge.models.InvitationResponse
 import com.virtualfridge.virtualfridge.services.UserService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import kotlin.random.Random
 
 @RestController
 class FamilyController(val userService: UserService) {
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
 
     @GetMapping("/family/invitations/{userId}")
     fun invitations(

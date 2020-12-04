@@ -1,15 +1,20 @@
 package com.virtualfridge.virtualfridge.controlers
 
-import com.virtualfridge.virtualfridge.errors.ApiException
+import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
+import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.EventResponse
 import com.virtualfridge.virtualfridge.services.UserService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
 import kotlin.random.Random
+
 
 @RestController
 class EventsController(val userService: UserService) {
+
+    @Autowired
+    private val userRepository: UserRepository? = null
 
     @PostMapping("events/create")
     fun createEvent(
@@ -48,11 +53,10 @@ class EventsController(val userService: UserService) {
                     "title$item",
                     "description$item",
                     "place$item",
-                    LocalDate.now(),
-                    LocalDate.of(1234, 2, 4)
+                    "01/12/2020",
+                    "10/12/2020"
             )
         }
-        throw ApiException()
         return ResponseEntity.ok(list)
     }
 

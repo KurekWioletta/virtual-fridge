@@ -5,5 +5,6 @@ data class UserResponse(
         val email: String,
         val firstName: String,
         val lastName: String,
+        val familyName: String? = null,
         val accountConfirmed: Boolean
 )

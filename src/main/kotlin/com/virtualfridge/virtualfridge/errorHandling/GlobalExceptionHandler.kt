@@ -1,4 +1,4 @@
-package com.virtualfridge.virtualfridge.errors
+package com.virtualfridge.virtualfridge.errorHandling
 
 import com.virtualfridge.virtualfridge.models.ApiExceptionResponse
 import org.springframework.http.ResponseEntity
@@ -13,7 +13,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(value = [ApiException::class])
     protected fun handleUnknownException(ex: ApiException, request: WebRequest?): ResponseEntity<ApiExceptionResponse> {
-        return ResponseEntity.status(422).body(ApiExceptionResponse(422, "Exception message"))
+        return ResponseEntity.status(422).body(ApiExceptionResponse(422, ex.errorMessage))
     }
 
 }
