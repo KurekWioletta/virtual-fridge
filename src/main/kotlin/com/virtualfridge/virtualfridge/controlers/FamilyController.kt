@@ -107,6 +107,8 @@ class FamilyController(val userService: UserService) {
         )
         invitationRepository.save(invitation)
 
+        // TODO: show notification to invited user
+
         return ResponseEntity.ok("Family member invited")
     }
 
