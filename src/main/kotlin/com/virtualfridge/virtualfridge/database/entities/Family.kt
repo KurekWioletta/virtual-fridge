@@ -6,12 +6,8 @@ import javax.persistence.*
 data class Family(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Int,
+        val id: Int? = null,
 
         @Column(nullable = false)
-        var familyName: String,
-
-        @Column(nullable = true)
-        @OneToMany(cascade = [CascadeType.ALL])
-        val familyMembers: List<User>? = null
+        var familyName: String
 )

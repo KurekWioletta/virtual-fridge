@@ -1,6 +1,7 @@
 package com.virtualfridge.virtualfridge.controlers
 
 import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
+import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.UserResponse
 import com.virtualfridge.virtualfridge.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +21,25 @@ class UserController(val userService: UserService) {
             @RequestParam("email") email: String,
             @RequestParam("password") password: String
     ): ResponseEntity<UserResponse> {
-        return ResponseEntity.ok(UserResponse("123", "mockedEmail", "mockedFirstName", "mockedLastName", true))
+        val user = userRepository.findUserByEmail(email) ?: throw ApiException("Email or password are invalid")
+
+        if (user.googleId != null) {
+            throw ApiException("This user is connected to google account, log in via google sign in")
+        }
+        // TODO: hashing
+        if (!user.password.equals(password)) {
+            throw ApiException("Email or password are invalid")
+        }
+
+        // TODO: account confirmation
+        return ResponseEntity.ok(UserResponse(
+                user.id.toString(),
+                user.email,
+                user.firstName,
+                user.lastName ?: "",
+                user.family?.familyName,
+                accountConfirmed = true
+        ))
     }
 
     @PostMapping("/user/notifications")

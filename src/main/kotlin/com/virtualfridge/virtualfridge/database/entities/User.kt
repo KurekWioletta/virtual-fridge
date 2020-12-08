@@ -27,6 +27,9 @@ data class User(
         var notificationToken: String? = null,
 
         @Column(nullable = true)
-        val googleId: String? = null
+        val googleId: String? = null,
 
+        @ManyToOne
+        @JoinColumn(name = "family_id", nullable = true)
+        var family: Family? = null
 )
