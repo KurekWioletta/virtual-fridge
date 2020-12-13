@@ -47,6 +47,10 @@ class FamilyController(val userService: UserService) {
                 .map { user ->
                     FamilyMemberResponse(user.id.toString(), user.firstName, user.lastName ?: "")
                 }
+                .ifEmpty {
+                    val user = userRepository.findById(Integer.parseInt(userId)).get()
+                    listOf(FamilyMemberResponse(user.id.toString(), user.firstName, user.lastName ?: ""))
+                }
 
         return ResponseEntity.ok(familyMembers)
     }
@@ -99,7 +103,12 @@ class FamilyController(val userService: UserService) {
             @RequestParam("userId") userId: String,
             @RequestParam("memberEmail") memberEmail: String
     ): ResponseEntity<String> {
-        val member = userRepository.findUserByEmail(memberEmail) ?: throw ApiException("Family member was not found")
+        val member = userRepository.findUserByEmail(memberEmail)
+                ?: throw ApiException("User with this email address was not found")
+
+        if (userRepository.findById(Integer.parseInt(userId)).get().family == null) {
+            throw ApiException("You are not in any family")
+        }
 
         val invitation = Invitation(
                 family = userRepository.findById(Integer.parseInt(userId)).get().family,
