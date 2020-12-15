@@ -41,18 +41,18 @@ class FamilyController(val userService: UserService) {
     fun familyMembers(
             @PathVariable("userId") userId: String
     ): ResponseEntity<List<FamilyMemberResponse>> {
-        val familyMembers = userRepository.findById(Integer.parseInt(userId)).get().family
-                ?.let { userRepository.findUsersFromFamily(it) }
-                .orEmpty()
-                .map { user ->
-                    FamilyMemberResponse(user.id.toString(), user.firstName, user.lastName ?: "")
-                }
-                .ifEmpty {
-                    val user = userRepository.findById(Integer.parseInt(userId)).get()
-                    listOf(FamilyMemberResponse(user.id.toString(), user.firstName, user.lastName ?: ""))
-                }
+        val user = userRepository.findById(Integer.parseInt(userId)).get()
 
-        return ResponseEntity.ok(familyMembers)
+        val familyMembers = user.family
+                ?.let { userRepository.findUsersFromFamily(it) }
+                // filter out "myself" to be able to add it at the beginning of the list
+                ?.filter { it -> it.id.toString() != userId }
+                .orEmpty()
+                .map { FamilyMemberResponse(it.id.toString(), it.firstName, it.lastName ?: "") }
+
+        val myself = listOf(FamilyMemberResponse(user.id.toString(), "Me", ""))
+
+        return ResponseEntity.ok(myself + familyMembers)
     }
 
     @PutMapping("/family/invitations/accept")

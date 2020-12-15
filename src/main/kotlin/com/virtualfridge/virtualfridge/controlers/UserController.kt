@@ -4,6 +4,7 @@ import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.UserResponse
 import com.virtualfridge.virtualfridge.services.UserService
+import com.virtualfridge.virtualfridge.utils.hash
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,12 +27,10 @@ class UserController(val userService: UserService) {
         if (user.googleId != null) {
             throw ApiException("This user is connected to google account, log in via google sign in")
         }
-        // TODO: hashing
-        if (!user.password.equals(password)) {
+        if (!user.password.equals(password.hash())) {
             throw ApiException("Email or password are invalid")
         }
 
-        // TODO: account confirmation
         return ResponseEntity.ok(UserResponse(
                 user.id.toString(),
                 user.email,

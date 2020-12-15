@@ -5,6 +5,7 @@ import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.UserResponse
 import com.virtualfridge.virtualfridge.services.RegistrationService
+import com.virtualfridge.virtualfridge.utils.hash
 import com.virtualfridge.virtualfridge.utils.isValidEmail
 import com.virtualfridge.virtualfridge.utils.isValidPassword
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,8 +47,7 @@ class RegistrationController(val registrationService: RegistrationService) {
         }
         user = User(
                 email = email,
-                // TODO: hash password
-                password = password,
+                password = password.hash(),
                 firstName = firstName,
                 lastName = lastName
         )
