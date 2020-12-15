@@ -42,7 +42,7 @@ class NotesController(val userService: UserService) {
             NotificationsManager.sendNotification(
                     title = "New note received",
                     description = "You received a note from ${author.firstName} ${author.lastName}: ${note.substring(0, 15)}...",
-                    registrationToken = author.notificationToken
+                    registrationToken = member.notificationToken
             )
         }
 
