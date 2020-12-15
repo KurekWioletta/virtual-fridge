@@ -6,6 +6,7 @@ import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.NoteResponse
 import com.virtualfridge.virtualfridge.services.UserService
+import com.virtualfridge.virtualfridge.utils.NotificationsManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -24,17 +25,27 @@ class NotesController(val userService: UserService) {
             @RequestParam("familyMemberId") familyMemberId: String,
             @RequestParam("note") note: String
     ): ResponseEntity<String> {
+        val author = userRepository.findById(Integer.parseInt(userId)).get()
+        val member = userRepository.findById(Integer.parseInt(familyMemberId)).get()
+
         if (note.isEmpty()) {
             throw ApiException("Note is required")
         }
 
         noteRepository.save(Note(
                 note = note,
-                author = userRepository.findById(Integer.parseInt(userId)).get(),
-                member = userRepository.findById(Integer.parseInt(familyMemberId)).get()
+                author = author,
+                member = member
         ))
 
-        // TODO: send notification
+        if (userId != familyMemberId) {
+            NotificationsManager.sendNotification(
+                    title = "New note received",
+                    description = "You received a note from ${author.firstName} ${author.lastName}: ${note.substring(0, 15)}...",
+                    registrationToken = author.notificationToken
+            )
+        }
+
         return ResponseEntity.ok("Note created")
     }
 
@@ -46,7 +57,6 @@ class NotesController(val userService: UserService) {
         val notes = noteRepository.findNotesForUser(user)
                 ?.map { NoteResponse(it.id.toString(), it.note, it.author.firstName, it.author.lastName ?: "") }
                 .orEmpty()
-
         return ResponseEntity.ok(notes)
     }
 
@@ -57,7 +67,13 @@ class NotesController(val userService: UserService) {
         val note = noteRepository.findById(Integer.parseInt(noteId)).get()
         noteRepository.delete(note)
 
-        // TODO: send notification
+        if (note.author.id != note.member.id) {
+            NotificationsManager.sendNotification(
+                    title = "Note removed",
+                    description = "Note was removed by ${note.member.firstName} ${note.member.lastName}: ${note.note.substring(0, 15)}...",
+                    registrationToken = note.author.notificationToken
+            )
+        }
         return ResponseEntity.ok("Note deleted")
     }
 
