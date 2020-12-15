@@ -1,20 +1,25 @@
 package com.virtualfridge.virtualfridge.controlers
 
+import com.virtualfridge.virtualfridge.database.entities.Event
+import com.virtualfridge.virtualfridge.database.reporitories.EventRepository
 import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.EventResponse
 import com.virtualfridge.virtualfridge.services.UserService
+import com.virtualfridge.virtualfridge.utils.dateTimeFormatter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import kotlin.random.Random
+import java.time.LocalDate
 
 
 @RestController
 class EventsController(val userService: UserService) {
 
     @Autowired
-    private val userRepository: UserRepository? = null
+    private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var eventRepository: EventRepository
 
     @PostMapping("events/create")
     fun createEvent(
@@ -25,45 +30,56 @@ class EventsController(val userService: UserService) {
             @RequestParam("startDate") startDate: String,
             @RequestParam("endDate") endDate: String
     ): ResponseEntity<String> {
+        if (title.isEmpty()) {
+            throw ApiException("Title is required")
+        }
+        if (startDate.isEmpty()) {
+            throw ApiException("Start date is required")
+        }
+        if (endDate.isEmpty()) {
+            throw ApiException("End date is required")
+        }
+
+        eventRepository.save(Event(
+                title = title,
+                description = description,
+                place = place,
+                startDate = LocalDate.parse(startDate, dateTimeFormatter),
+                endDate = LocalDate.parse(endDate, dateTimeFormatter),
+                user = userRepository.findById(Integer.parseInt(userId)).get()
+        ))
+
         return ResponseEntity.ok("Event created")
     }
 
-    @PutMapping("events/edit")
-    fun editEvent(
-            @RequestParam("eventId") eventId: String,
-            @RequestParam("title") title: String,
-            @RequestParam("text") text: String,
-            @RequestParam("place") place: String,
-            @RequestParam("startDate") startDate: String,
-            @RequestParam("endDate") endDate: String
-    ): ResponseEntity<String> {
-        return ResponseEntity.ok("Event edited")
-    }
-
-    @Throws(ApiException::class)
     @GetMapping("events/{userId}")
     fun events(
             @PathVariable("userId") userId: String
     ): ResponseEntity<List<EventResponse>> {
-        val randomValue = Random.nextInt(5)
-        val list = mutableListOf<EventResponse>()
-        for (item: Int in 0..randomValue) {
-            list += EventResponse(
-                    "123",
-                    "title$item",
-                    "description$item",
-                    "place$item",
-                    "01/12/2020",
-                    "10/12/2020"
-            )
-        }
-        return ResponseEntity.ok(list)
+        val user = userRepository.findById(Integer.parseInt(userId)).get()
+        val events = eventRepository.findEventsForUser(user)
+                ?.map {
+                    EventResponse(
+                            it.id.toString(),
+                            title = it.title,
+                            description = it.description,
+                            place = it.place,
+                            startDate = dateTimeFormatter.format(it.startDate),
+                            endDate = dateTimeFormatter.format(it.endDate)
+                    )
+                }
+                .orEmpty()
+
+        return ResponseEntity.ok(events)
     }
 
     @DeleteMapping("events/delete/{eventId}")
     fun deleteEvent(
             @PathVariable("eventId") eventId: String
     ): ResponseEntity<String> {
+        val note = eventRepository.findById(Integer.parseInt(eventId)).get()
+        eventRepository.delete(note)
+
         return ResponseEntity.ok("Event deleted")
     }
 }
