@@ -4,7 +4,6 @@ import com.virtualfridge.virtualfridge.database.entities.User
 import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.UserResponse
-import com.virtualfridge.virtualfridge.services.RegistrationService
 import com.virtualfridge.virtualfridge.utils.hash
 import com.virtualfridge.virtualfridge.utils.isValidEmail
 import com.virtualfridge.virtualfridge.utils.isValidPassword
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class RegistrationController(val registrationService: RegistrationService) {
+class RegistrationController() {
 
     @Autowired
     private lateinit var userRepository: UserRepository

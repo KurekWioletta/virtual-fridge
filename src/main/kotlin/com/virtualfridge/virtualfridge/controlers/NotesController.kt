@@ -5,14 +5,13 @@ import com.virtualfridge.virtualfridge.database.reporitories.NoteRepository
 import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.NoteResponse
-import com.virtualfridge.virtualfridge.services.UserService
 import com.virtualfridge.virtualfridge.utils.NotificationsManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class NotesController(val userService: UserService) {
+class NotesController() {
 
     @Autowired
     private lateinit var userRepository: UserRepository

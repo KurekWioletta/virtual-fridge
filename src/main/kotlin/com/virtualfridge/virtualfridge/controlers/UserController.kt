@@ -3,7 +3,6 @@ package com.virtualfridge.virtualfridge.controlers
 import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.UserResponse
-import com.virtualfridge.virtualfridge.services.UserService
 import com.virtualfridge.virtualfridge.utils.hash
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class UserController(val userService: UserService) {
+class UserController() {
 
     @Autowired
     private lateinit var userRepository: UserRepository

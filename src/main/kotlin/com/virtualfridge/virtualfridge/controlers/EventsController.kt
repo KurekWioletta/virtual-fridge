@@ -5,7 +5,6 @@ import com.virtualfridge.virtualfridge.database.reporitories.EventRepository
 import com.virtualfridge.virtualfridge.database.reporitories.UserRepository
 import com.virtualfridge.virtualfridge.errorHandling.ApiException
 import com.virtualfridge.virtualfridge.models.EventResponse
-import com.virtualfridge.virtualfridge.services.UserService
 import com.virtualfridge.virtualfridge.utils.dateTimeFormatter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -14,7 +13,7 @@ import java.time.LocalDate
 
 
 @RestController
-class EventsController(val userService: UserService) {
+class EventsController() {
 
     @Autowired
     private lateinit var userRepository: UserRepository
