@@ -53,9 +53,26 @@ class NotesController() {
             @PathVariable("userId") userId: String
     ): ResponseEntity<List<NoteResponse>> {
         val user = userRepository.findById(Integer.parseInt(userId)).get()
-        val notes = noteRepository.findNotesForUser(user)
-                ?.map { NoteResponse(it.id.toString(), it.note, it.author.firstName, it.author.lastName ?: "") }
-                .orEmpty()
+
+        val familyMembers = user.family
+                ?.let { userRepository.findUsersFromFamily(it) }
+                ?.filter { it -> it.id.toString() != userId }
+                .orEmpty().toMutableList()
+
+        familyMembers += user
+
+        val notes = familyMembers.flatMap { member ->
+            noteRepository.findNotesForUser(member)
+                    ?.map {
+                        val addressFirstName = if (member.id == Integer.parseInt(userId)) null else member.firstName
+                        val addressLastName = if (member.id == Integer.parseInt(userId)) null else member.lastName
+                        val authorFirstName = if (it.author.id == Integer.parseInt(userId)) null else it.author.firstName
+                        val authorLastName = if (it.author.id == Integer.parseInt(userId)) null else it.author.lastName
+                        NoteResponse(it.id.toString(), it.note, addressFirstName, addressLastName, authorFirstName, authorLastName)
+                    }
+                    .orEmpty()
+        }
+
         return ResponseEntity.ok(notes)
     }
 
